@@ -1,24 +1,26 @@
 var fs = require('fs'); 
 var { parse } = require('csv-parse');
 var axios = require('axios')
-var parser = parse({columns: true}, function (err, records) {
-	records = records[0]
+var parser = parse({columns: true}, async function (err, records) {
 	const allowed = ["id", "name", "album", "artists", "release_date"]
-	const filtered = Object.keys(records)
-	.filter(key => allowed.includes(key))
-	.reduce((obj, key) => {
-		if(key === "artists"){
-			records[key] = records[key].replaceAll('\'', '\"')
-			records[key] = JSON.parse(records[key])
-		}
-		obj[key] = records[key]
-		return obj
-	}, {});
-	console.log(filtered)
-	axios.post('http://localhost:8081/song', filtered).then((data) => {
-        console.log(data.data)
-    }).catch(error => {
-        console.log(error)
-    })
+	const filtered = []
+	records.forEach(record => {
+		filtered.push(Object.keys(record)
+		.filter(key => allowed.includes(key))
+		.reduce((obj, key) => {
+			if(key === "id") obj["_id"] = record[key]
+			else obj[key] = record[key]
+			return obj
+		}, {}))
+	});
+	for(let i = 2000; i < 10000; i++){
+		await new Promise(r => setTimeout(r, 4000));
+		axios.post('http://localhost:8080/song', filtered[i]).then((data) => {
+			console.log(data.data)
+		}).catch(error => {
+			console.log(error)
+		})
+	}
 });
+
 fs.createReadStream("../../../tracks_features.csv").pipe(parser);

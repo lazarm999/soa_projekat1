@@ -7,9 +7,9 @@ const apiDoc = {
   definitions: {
     Song: {
       type: 'object',
-      required: ["id", "name", "album", "artists", "release_date"],
+      required: ["_id", "name", "album", "artists", "release_date"],
       properties: {
-          id: {
+          _id: {
             type: "string"
           },
           name: {
@@ -19,25 +19,15 @@ const apiDoc = {
             type: "string"
           },
           artists: {
-            type: "array",
-            items: {
-                type: "string"
-            }
+            type: "string"
           },
           release_date: {
             type: "string"
+          },
+          lyrics:{
+            type: "string"
           }
         }
-    },
-    World: {
-      type: 'object',
-      properties: {
-        name: {
-          description: 'The name of this world.',
-          type: 'string'
-        }
-      },
-      required: ['name']
     }
   },
   paths: {}

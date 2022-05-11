@@ -1,11 +1,19 @@
-module.exports = function(worldsService) {
+const axios = require('axios')
+
+module.exports = function() {
     let operations = {
       POST
     };
   
     function POST(req, res, next) {
-        console.log(req.body)
-        res.status(200).json({ message: "sve kul"});
+      axios.post('http://api_db:5000/song', req.body).then((data) => {
+          res.send(200)
+      }).catch(error => {
+        if(error.response !== undefined)
+          res.sendStatus(error.response.status)
+        else
+          res.sendStatus(500)
+      })
     }
 
     POST.apiDoc = {
@@ -23,7 +31,7 @@ module.exports = function(worldsService) {
       ],
       responses: {
         200: {
-          description: 'A list of worlds that match the requested name.',
+          description: "/song POST",
           schema: {
             type: 'string'
           }
